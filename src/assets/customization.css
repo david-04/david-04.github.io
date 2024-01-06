@@ -1,0 +1,18 @@
+#starlight__sidebar {
+    visibility: hidden;
+}
+
+main .content-panel:nth-child(2) {
+    margin-top: -2em;
+    border-top: none;
+}
+
+#starlight__on-this-page {
+    display: none;
+}
+
+
+
+span.description {
+    color: var(--sl-color-text)
+}

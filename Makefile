@@ -7,7 +7,7 @@ help:
 	$(info $()  uplift ...... upgrade Astro and Starlight)
 
 build:
-	astro build
+	astro build && touch docs/.nojekyll
 
 preview:
 	npm run preview

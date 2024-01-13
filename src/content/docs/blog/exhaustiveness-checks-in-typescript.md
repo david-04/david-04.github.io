@@ -3,13 +3,13 @@ title: Compile-time exhaustiveness checks in TypeScript
 description: A guide to checking at compile-time that TypeScript code contains if/else branches for every possible input
 slug: blog/exhaustiveness-checks-in-typescript
 author: David Hofmann
-pubDate: 2024-01-06
-lastUpdated: 2024-01-06
+pubDate: 2024-01-14
+lastUpdated~: 2024-01-14
 ---
 
-David Hofmann | 2024-06-01
+David Hofmann | 2024-01-14
 
-![](../../../../public//blog/exhaustiveness-checks-in-typescript.jpg)
+![](../../../../public/blog/high-resolution/exhaustiveness-checks-in-typescript-banner-1920-50.jpg)
 
 Exhaustiveness checks make sure that there is a suitable `if`/`else` or `switch`/`case` branch for every possible input that a function might process. Without these safeguards, unexpected input can lead to silent failures that are hard to spot. In TypeScript, exhaustiveness can be checked through the type system to identify missing code paths right at compile-time.
 
@@ -29,7 +29,7 @@ function log(logLevel: LogLevel, message: string) {
 }
 ```
 
-This code is exhaustive. The `log` function has a dedicated code path for every possible log level. But there is no explicit check for exhaustiveness. This becomes a problem when someone adds another enum value later on:
+This code is exhaustive. The `log` function has a dedicated code path for every possible log level. But there is no explicit check for exhaustiveness. This becomes a problem when another value is added to the enum:
 
 ```typescript
 enum LogLevel { ERROR, INFO, WARNING }; // WARNING was added
@@ -113,9 +113,9 @@ function log(logLevel: LogLevel, message: string) {
 }
 ```
 
-`logLevel` can only be `ERROR` or `INFO`. But once we get into the `else` branch, it can neither be `ERROR` nor `INFO`. There are no other values left. TypeScript indicates this by setting the type to `never`. It effectively means that it can never happen. We can never get into this `else` branch.
+Before starting to narrow down the type, `logLevel` is known to be either `ERROR` or `INFO`. The non-matching `if` and `else-if` conditions remove `ERROR` and `INFO` from the list of possible values. When we get into the final `else` branch, all enum values have been ruled out. There are no other values left. TypeScript indicates this by setting the type to `never`. It effectively means that it can never happen. There's no way to get into the `else` branch.
 
-If `logLevel` is `never`, the `if`/`else` branches must be exhaustive. This can be asserted through a `satisfies` type check:
+If `logLevel` is `never`, the `if`/`else-if` branches must be exhaustive. This can be asserted through a `satisfies` type check:
 
 ```typescript
 enum LogLevel { ERROR, INFO };
@@ -149,7 +149,7 @@ function log(logLevel: LogLevel, message: string) {
 }
 ```
 
-Adding an `else` branch with a `satisfies` check effectively protects the `log` function from losing its exhaustiveness. But it has a few downsides as well.  It makes the code a bit longer and requires yet another unit test. There is no enum value that would go into the `else` branch, so we'd have to bypass the type system. And even then, test coverage tools tend to not recognize the execution of the `else` branch.
+Adding an `else` branch with a `satisfies` check protects the `log` function from losing its exhaustiveness. But it has a few downsides as well. It makes the code a bit longer and requires yet another unit test. There is no enum value that would go into the `else` branch. We'd need to bypass the type system. And even then, test coverage tools tend to not recognize that the `else` branch is being executed.
 
 ## Compile-time checks without "never"
 
@@ -176,7 +176,7 @@ enum LogLevel { ERROR, INFO, WARNING }; // WARNING was added
 
 function log(logLevel: LogLevel, message: string) {
     if (logLevel === LogLevel.ERROR) {
-        console.error(`⛔ ERROR: ${message}`);
+        console.error(`ERROR: ${message}`);
     } else {
         // logLevel is known to be INFO or WARNING, causing
         // the check below to raise a compile-time error
@@ -186,11 +186,11 @@ function log(logLevel: LogLevel, message: string) {
 }
 ```
 
-Adding a simple `satisfies` check in the final `else` branch is a lightweight and effective way to prevent discrepancies between interdependent parts of the code.
+Adding a simple `satisfies` check in the final `else` branch is a lightweight and effective way to ensure that a function's exhaustiveness is preserved at all times.
 
 ## Compile-time checks through lookups
 
-Exhaustiveness checks with `satisfies` assert that there are enough `if`/`else` or `switch`/`case` branches to handle every possible input. Instead of checking that all branches are present, we can also avoid `if` and `switch` statements altogether and use a simple object/map lookup instead:
+Exhaustiveness checks with `satisfies` assert that there are enough `if`/`else` or `switch`/`case` branches to handle every possible input. Instead of checking the exhaustiveness of branches, we can also avoid `if` and `switch` statements altogether and use a simple object/map lookup instead:
 
 ```typescript
 enum LogLevel { ERROR, INFO };
@@ -218,7 +218,7 @@ enum LogLevel { ERROR, INFO };
 
 const LOG_PREFIX: Record<LogLevel, string> = {
     [LogLevel.ERROR]: "[ERROR] ",
-    [LogLevel.INFO]: "[INFO]  ",
+    [LogLevel.INFO ]: "[INFO]  ",
 };
 
 function log(logLevel: LogLevel, message: string) {
@@ -239,11 +239,11 @@ class LogLevel {
         public readonly index: number
     ) { }
     public static ERROR = new LogLevel("ERROR", 0);
-    public static INFO = new LogLevel("INFO", 1);
+    public static INFO  = new LogLevel("INFO" , 1);
 }
 ```
 
-Making the constructor `private` prevents other instances from being created outside of the class. This means that there is only a finite number of log levels. Any `LogLevel` instance that we come across can only be `LogLevel.ERROR` or `LogLevel.INFO`.
+Making the constructor `private` prevents other instances from being created outside of the class. This means that there is only a finite number of log levels. Any `LogLevel` instance can only be `LogLevel.ERROR` or `LogLevel.INFO`.
 
 However, TypeScript does not treat individual class instances as a dedicated and distinguishable data type. Comparing the `logLevel` parameter with known values does not narrow down the type:
 
@@ -257,7 +257,7 @@ function log(logLevel: LogLevel, message: string) {
 }
 ```
 
-Only plain enums and union types (like `string | number`) can be checked for exhaustiveness via `satisfies`. To avoid non-exhaustive `if`/`else` branches for class instances, it's safest to embed instance-specific configuration or callback functions into the class itself. We can then access the relevant data/functionality directly from the log level intance:
+Only enums and union types (like `string | number`) can be checked for exhaustiveness via `satisfies`. When dealing with class instances, it's safest to avoid `if`/`else` and `switch`/`case` branches altogether. Instead, all instance-specific data and functions can be embedded into the class itself:
 
 ```typescript
 class LogLevel {
@@ -269,7 +269,7 @@ class LogLevel {
     ) { }
 
     public static ERROR = new LogLevel("ERROR", 0, "🔴", console.error);
-    public static INFO = new LogLevel("INFO", 1, "🟢", console.log);
+    public static INFO  = new LogLevel("INFO" , 1, "🟢", console.log  );
 }
 
 function log(logLevel: LogLevel, message: string) {
@@ -277,4 +277,4 @@ function log(logLevel: LogLevel, message: string) {
 }
 ```
 
-The `log` function no longer needs an `if`/`else` statement and can't become non-exhaustive.
+The `log` function no longer needs an `if`/`else` statement and can't become non-exhaustive. The `LogLevel` constructor with its mandatory parameters makes sure that every log level that's added in the future has all relevant data. The constructor does not even need to be `private`. Even random `LogLevel` instances created at runtime would be handled correctly by the `log` function.

@@ -1,18 +1,20 @@
+/* Hide the sidebar */
 #starlight__sidebar {
     visibility: hidden;
 }
 
+/* Remove the horizontal line and unnecessary spacing between the title and the text */
 main .content-panel:nth-child(2) {
     margin-top: -2em;
     border-top: none;
 }
 
+/* Hide the "On this page" from a page's table of contents on the right */
 #starlight__on-this-page {
     display: none;
 }
 
-
-
+/* In the blog's list/card view, render description text with regular text color */
 span.description {
     color: var(--sl-color-text)
 }

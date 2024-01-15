@@ -7,9 +7,9 @@ pubDate: 2024-01-14
 lastUpdated~: 2024-01-14
 ---
 
-David Hofmann | 2024-01-14
+2024-01-14 &nbsp;|&nbsp; David Hofmann
 
-![](../../../../public/blog/high-resolution/exhaustiveness-checks-in-typescript-banner-1920-50.jpg)
+![](../../../../public/blog/exhaustiveness-checks-in-typescript.jpg)
 
 Exhaustiveness checks make sure that there is a suitable `if`/`else` or `switch`/`case` branch for every possible input that a function might process. Without these safeguards, unexpected input can lead to silent failures that are hard to spot. In TypeScript, exhaustiveness can be checked through the type system to identify missing code paths right at compile-time.
 

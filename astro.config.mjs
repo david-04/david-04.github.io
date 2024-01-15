@@ -5,12 +5,13 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	outDir: './docs',
 	redirects: {
-		'/': '/blog/'
+		'/': '/blog'
 	},
-	site: 'https://david-04.github.io',
+	//site: 'https://david-04.github.io',
 	integrations: [
 		starlight({
-			title: "dev'neatly",
+			title: "David's blog",
+			favicon: "../public/favicon.ico",
 			social: {
 				github: 'https://github.com/david-04',
 			},
@@ -25,8 +26,13 @@ export default defineConfig({
 					// ],
 				},
 			],
-			pagination: false
-
+			pagination: false,
+			tableOfContents: {
+				minHeadingLevel: 1,
+				maxHeadingLevel: 5,
+			},
+			lastUpdated: false,
+			favicon: '/favicon.ico',
 		}),
 	],
 });

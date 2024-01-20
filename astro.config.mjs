@@ -1,3 +1,4 @@
+import sitemap from '@astrojs/sitemap';
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 
@@ -7,7 +8,7 @@ export default defineConfig({
 	redirects: {
 		'/': '/blog'
 	},
-	//site: 'https://david-04.github.io',
+	site: 'https://david-04.github.io',
 	integrations: [
 		starlight({
 			title: "David's blog",
@@ -33,6 +34,11 @@ export default defineConfig({
 			},
 			lastUpdated: false,
 			favicon: '/favicon.ico',
+		}),
+		sitemap({
+			filter: (page) => {
+				return ["/blog/"].map(path => `https://david-04.github.io${path}`).includes(page)
+			}
 		}),
 	],
 });

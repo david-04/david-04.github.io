@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://david-04.github.io/sitemap-index.xml

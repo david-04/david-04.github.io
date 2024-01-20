@@ -4,7 +4,12 @@ description: A guide to checking at compile-time that TypeScript code contains i
 slug: blog/exhaustiveness-checks-in-typescript
 author: David Hofmann
 pubDate: 2024-01-21
+date: 2024-01-21
 lastUpdated~: 2024-01-21
+head: [
+    { tag: "meta", attrs: { property: "article:published_time", content: "2024-01-21" } },
+    { tag: "meta", attrs: { property: "article:modified_time", content: "2024-01-21" } }
+]
 ---
 
 2024-01-21 &nbsp;|&nbsp; David Hofmann

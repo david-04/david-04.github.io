@@ -34,6 +34,10 @@ export default defineConfig({
 			},
 			lastUpdated: false,
 			favicon: '/favicon.ico',
+			head: [
+				{ tag: "meta", attrs: { name: "author", content: "David Hofmann" } },
+				// { tag: "meta", attrs: { property: "article:author", content: "David Hofmann" } }
+			]
 		}),
 		sitemap({
 			filter: (page) => {

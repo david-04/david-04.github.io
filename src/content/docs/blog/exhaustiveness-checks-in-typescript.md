@@ -3,11 +3,11 @@ title: Compile-time exhaustiveness checks in TypeScript
 description: A guide to checking at compile-time that TypeScript code contains if/else branches for every possible input
 slug: blog/exhaustiveness-checks-in-typescript
 author: David Hofmann
-pubDate: 2024-01-14
-lastUpdated~: 2024-01-14
+pubDate: 2024-01-21
+lastUpdated~: 2024-01-21
 ---
 
-2024-01-14 &nbsp;|&nbsp; David Hofmann
+2024-01-21 &nbsp;|&nbsp; David Hofmann
 
 ![](../../../../public/blog/exhaustiveness-checks-in-typescript.jpg)
 
